@@ -18,17 +18,37 @@ class App extends React.Component {
     this.onSelectCurrency = this.onSelectCurrency.bind(this);
   }
   onSelectCurrency(code){
-    const {currencies} = this.state;
+    const {currencies, currencyAval} = this.state;
       //console.log('onSelectCurrency code ' + code)
       const currency = currencies.filter(currency => currency.code === code)
       this.setState({
-        currencyB: currency[0]
+        currencyB: currency[0],
+        currencyBval: currencyAval * currency[0].sellRate
       })
+  }
+
+  onChangeHandler(e, currency){
+    const {currencyA, currencyB} = this.state;
+    if (currency === 'A'){
+      const newValue = e.target.value;
+
+      this.setState({
+        currencyAval: newValue,
+        currencyBval: newValue * currencyB.sellRate
+      })
+    }else{
+      const newValue = e.target.value;
+
+      this.setState({
+        currencyAval: newValue * currencyB.sellRate,
+        currencyBval: newValue
+      })
+    }
   }
 
   render(){
     // Deconstruct
-    const {currencies, currencyA, currencyB, currecnyAval, currencyBval} = this.state
+    const {currencies, currencyA, currencyB, currencyAval, currencyBval} = this.state
     return (
       <div>
         <header>
@@ -56,7 +76,9 @@ class App extends React.Component {
               }
               <div className="input-group">
                 <span className="input-group-addon">{currencyA.sign}</span>
-                <input type="number" defaultValue={0} className="form-control" aria-describedby="basic-addon2" step="1" pattern="\d\.\d{2}"  />
+                <input type="number" value={currencyAval} className="form-control"
+                  aria-describedby="basic-addon2" step="1" pattern="\d\.\d{2}"
+                  onChange={(e) => this.onChangeHandler(e, 'A')} />
                 <span className="input-group-addon" id="basic-addon2">{currencyA.code}</span>
               </div>
 
@@ -68,7 +90,9 @@ class App extends React.Component {
               }
               <div className="input-group">
                 <span className="input-group-addon">{currencyB.sign}</span>
-                <input type="number" defaultValue={0} className="form-control" aria-describedby="basic-addon3" step="1" pattern="\d\.\d{2}"  />
+                <input type="number" value={currencyBval} className="form-control"
+                  aria-describedby="basic-addon3" step="1" pattern="\d\.\d{2}"
+                  onChange={(e) => this.onChangeHandler(e, 'B')} />
                 <span className="input-group-addon" id="basic-addon3">{currencyB.code}</span>
               </div>
 
